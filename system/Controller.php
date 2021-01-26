@@ -4,13 +4,22 @@ namespace app\system;
 
 use app\system\middlewares\BaseMiddleware;
 
-class Controller
+class Controller extends View
 {
- 
-    public string $layout = 'main';
+
+    public Response $response;
+    public Request $request;
+    public Session $session;
+
     public string $action = '';
     protected array $middlewares = [];
-
+    
+    public function __construct(){
+        $this->request = new Request;
+        $this->response = new Response;
+        $this->session = new Session;
+    }
+ 
     public function setLayout($layout)
     {
 
@@ -18,23 +27,23 @@ class Controller
 
     }
 
-    public function render($view, $params = [])
-    {
+    // public function render($view, $params = [])
+    // {
 
-        return App::$app->view->renderView($view, $params);
+    //     return $this->renderView($view, $params);
 
-    }
+    // }
 
-    public function registerMiddleware(BaseMiddleware $middleware)
-    {
+    // public function registerMiddleware(BaseMiddleware $middleware)
+    // {
 
-        $this->middlewares[] = $middleware;
+    //     $this->middlewares[] = $middleware;
 
-    }
+    // }
 
-    public function getMiddlewares(): array
-    {
-        return $this->middlewares;
-    }
+    // public function getMiddlewares(): array
+    // {
+    //     return $this->middlewares;
+    // }
 
 }

@@ -53,15 +53,15 @@ abstract class Model
 
                 if(!is_string($ruleName)) $ruleName = $rule[0];
 
-                if($ruleName === self::RULE_REQUIRED && !$value) $this->addErrorForRule($attr, self::RULE_REQUIRED);
+                if($ruleName === self::RULE_REQUIRED && !$value) $this->addErrorForRule(self::RULE_REQUIRED);
 
-                if($ruleName === self::RULE_EMAIL && !filter_Var($value, FILTER_VALIDATE_EMAIL)) $this->addErrorForRule($attr, self::RULE_EMAIL);
+                if($ruleName === self::RULE_EMAIL && !filter_Var($value, FILTER_VALIDATE_EMAIL)) $this->addErrorForRule(self::RULE_EMAIL);
 
-                if($ruleName === self::RULE_MIN && strlen($value) < $rule['min']) $this->addErrorForRule($attr, self::RULE_MIN, [self::RULE_MIN => $rule['min']]);
+                if($ruleName === self::RULE_MIN && strlen($value) < $rule['min']) $this->addErrorForRule(self::RULE_MIN, [self::RULE_MIN => $rule['min']]);
 
-                if($ruleName === self::RULE_MAX && strlen($value) > $rule['max']) $this->addErrorForRule($attr, self::RULE_MAX, [self::RULE_MIN => $rule['min']]);
+                if($ruleName === self::RULE_MAX && strlen($value) > $rule['max']) $this->addErrorForRule(self::RULE_MAX, [self::RULE_MIN => $rule['min']]);
 
-                if($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) $this->addErrorForRule($attr, self::RULE_MATCH, [self::RULE_MATCH => $this->getLabel($rule['match'])]);
+                if($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) $this->addErrorForRule(self::RULE_MATCH, [self::RULE_MATCH => $this->getLabel($rule['match'])]);
 
                 if($ruleName === self::RULE_UNIQUE){
                     $className = $rule['class'];
@@ -72,7 +72,7 @@ abstract class Model
                     $stmt->bindValue(":attr", $value);
                     $stmt->execute();
                     $record = $stmt->fetchObject();
-                    if($record) $this->addErrorForRule($attr, self::RULE_UNIQUE, ['field' => $this->getLabel($attr)]);
+                    if($record) $this->addErrorForRule(self::RULE_UNIQUE, ['field' => $this->getLabel($attr)]);
                 }
          
             }
@@ -83,20 +83,20 @@ abstract class Model
 
     }
 
-    private function addErrorForRule(string $attr, string $rule, $replace = [])
+    private function addErrorForRule(string $rule, $replace = [])
     {
 
         $message = $this->errorMessages()[$rule] ?? '';
         foreach($replace as $key => $value){
             $message = str_replace("{{$key}}", $value, $message);
         }
-        $this->errors[$attr][] = $message;
+        $this->errors[] = $message;
 
     }
 
-    public function addError(string $attr, string $message)
+    public function addError(string $message)
     {
-        $this->errors[$attr][] = $message;
+        $this->errors[] = $message;
     }
 
     public function errorMessages()
@@ -115,14 +115,9 @@ abstract class Model
 
     }
 
-    public function hasError($attr)
+    public function getFirstError()
     {
-        return $this->errors[$attr] ?? false;
-    }
-
-    public function getFirstError($attr)
-    {
-        return $this->errors[$attr][0] ?? false;
+        return $this->errors[0] ?? false;
     }
 
 }

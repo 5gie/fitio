@@ -3,64 +3,72 @@
 namespace app\controllers;
 
 use app\system\Controller;
-use app\system\Request;
 use app\models\User;
-use app\system\App;
-use app\models\LoginForm;
-use app\system\middlewares\AuthMiddleware;
-use app\system\Response;
+use app\models\Login;
 
 class AuthController extends Controller
 {
 
-    public function __construct()
+    public function __construct() 
     {
-        $this->registerMiddleware(new AuthMiddleware(['profile']));
+        $this->setLayout('auth');
+
+        parent::__construct();
     }
 
-    public function login(Request $request, Response $response)
+    public function login()
     {
 
-        $errors = [];
-        $loginForm = new LoginForm;
-        if($request->post()){
+        $this->session->setFlash('success', 'afasdfdfsaafsdfsd');
 
-            $loginForm->data($request->body());
-            if($loginForm->validate() && $loginForm->login()){
+        $this->response->redirect('/');
+        
 
-                $response->redirect('/');
+        $login = new Login;
+
+        if($this->request->post()){
+
+            $login->data($this->request->body());
+            if($login->validate() && $login->login()){
+
+                $this->session->setFlash('success', 'afasdfdfsaafsdfsd');
+
+                $this->response->redirect('/');
+
                 return;
+
+            } else {
+
+              
+                $error = $login->getFirstError();
+
             }
         }
-        $this->setLayout('auth');
+
         return $this->render('auth/login', [
-            'model' => $loginForm
+            'model' => $login
         ]);
 
     }
 
-    public function register(Request $request)
+    public function register()
     {
-
-        $errors = [];
 
         $user = new User();
         
-        if ($request->post()) {
+        if ($this->request->post()) {
 
-            $user->data($request->body());
+            $user->data($this->request->body());
 
             if($user->validate() && $user->save()){
 
-                App::$app->session->setFlash('success', 'Thank you for registration');
-                App::$app->response->redirect('/');
+                // App::$app->session->setFlash('success', 'Thank you for registration');
+                // App::$app->response->redirect('/');
             
             }
 
 
         }
-
-        $this->setLayout('auth');
 
         return $this->render('auth/register', [
             'model' => $user
@@ -68,11 +76,11 @@ class AuthController extends Controller
 
     }
 
-    public function logout(Request $request, Response $response)
-    {
-        App::$app->logout();
-        $response->redirect('/');
-    }
+    // public function logout(Request $request, Response $response)
+    // {
+    //     App::$app->logout();
+    //     $response->redirect('/');
+    // }
 
     public function profile()
     {

@@ -26,9 +26,8 @@ class InputField extends BaseField
             <div class="mb-3">
                 <label class="form-label">%s</label>
                 %s
-                <div class="invalid-feedback">%s</div>
             </div>
-        ', $this->model->getLabel($this->attr), $this->renderInput(), $this->model->getFirstError($this->attr));
+        ', $this->model->getLabel($this->attr), $this->renderInput());
 
     }
 
@@ -42,7 +41,7 @@ class InputField extends BaseField
 
     public function renderInput(): string
     {
-        return sprintf('<input type="%s" name="%s" value="%s" class="form-control %s">', $this->type, $this->attr, $this->model->{$this->attr}, $this->model->hasError($this->attr) ? 'is-invalid' : '');
+        return sprintf('<input type="%s" name="%s" value="%s" class="form-control">', $this->type, $this->attr, $this->model->{$this->attr});
     }
 
 }

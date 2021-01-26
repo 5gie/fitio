@@ -26,15 +26,14 @@ class TextareaField extends BaseField
             <div class="mb-3">
                 <label class="form-label">%s</label>
                 %s
-                <div class="invalid-feedback">%s</div>
             </div>
-        ', $this->model->getLabel($this->attr), $this->renderInput(), $this->model->getFirstError($this->attr));
+        ', $this->model->getLabel($this->attr), $this->renderInput());
 
     }
 
     public function renderInput(): string
     {
-        return sprintf('<textarea name="%s" class="form-control %s">%s</textarea>', $this->attr, $this->model->hasError($this->attr) ? 'is-invalid' : '', $this->model->{$this->attr});
+        return sprintf('<textarea name="%s" class="form-control">%s</textarea>', $this->attr, $this->model->{$this->attr});
     }
 
 }
