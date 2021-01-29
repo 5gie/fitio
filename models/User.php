@@ -34,9 +34,7 @@ class User extends UserModel
 
         $this->status = self::STATUS_INACTIVE;
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-        $this->id = parent::save();
-
-        return $this->id;
+        return parent::save();
     }
     
     public function rules(): array

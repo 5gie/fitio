@@ -20,11 +20,6 @@ class Approvals extends DbModel
         return 'id';
     }
 
-    // public function save()
-    // {
-    //     return parent::save();
-    // }
-
     public function rules(): array
     {
         return [];

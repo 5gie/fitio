@@ -23,6 +23,8 @@ class ConfigRoutes
         $router->mount('/profil', function() use ($router) {
 
             $router->get('/', 'AccountController@profile');
+            $router->get('/dane', 'AccountController@userData');
+            $router->post('/dane', 'AccountController@userData');
 
         });
         

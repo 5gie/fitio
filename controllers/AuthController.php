@@ -30,7 +30,7 @@ class AuthController extends Controller
 
                 $this->session->set('user', $login->id);
 
-                $this->response->redirect('/');
+                $this->response->redirect('/profil');
 
                 return;
 
@@ -71,11 +71,9 @@ class AuthController extends Controller
 
             $user->data($this->request->body());
 
-            if($user->validate()){
+            if($user->validate() && $user->save()){
 
-                $id = $user->save();
-
-                if($id) $user->insertApprovals();
+                if($user->id) $user->insertApprovals();
 
                 $this->session->setFlash('success', 'Na podany adres e-mail została wysłana wiadomośc z potwierdzeniem akceptacji konta.');
 
@@ -95,17 +93,6 @@ class AuthController extends Controller
             'model' => $user,
         ]);
 
-    }
-
-    // public function logout(Request $request, Response $response)
-    // {
-    //     App::$app->logout();
-    //     $response->redirect('/');
-    // }
-
-    public function profile()
-    {
-        return $this->render('account/profile');
     }
 
 }

@@ -11,6 +11,7 @@ abstract class Model
     public const RULE_MATCH = 'match';
     public const RULE_UNIQUE = 'unique';
     public const RULE_APPROVAL = 'approval';
+    public const RULE_IMAGE = 'image';
 
     public function data($data)
     {

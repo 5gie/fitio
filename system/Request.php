@@ -39,6 +39,13 @@ class Request
 
     }
 
+    public function file($name)
+    {
+
+        return isset($_FILES[$name]['name']) && !empty($_FILES[$name]['name']) ? $_FILES[$name] : false;
+
+    }
+
     public function body()
     {
 

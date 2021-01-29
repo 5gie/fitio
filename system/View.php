@@ -17,21 +17,47 @@ abstract class View
         $this->addCss('all.css');
         $this->addCss('style.less', 'less');
 
+        $this->addJs('main.js');
+        $this->addJs('gsap.min.js');
         $this->addJs('bootstrap.min.js');
         $this->addJs('popper.min.js');
         $this->addJs('jquery-3.4.1.min.js');
 
         $viewContent = $this->renderOnlyView($view, $data);
         $layoutContent = $this->layoutContent();
-        echo str_replace('{{content}}', $viewContent, $layoutContent);
-        // include App::$ROOT_DIR . "/views/$view.php";
+        $alertsContent = $this->alertsContent();
+        $javscriptContent = $this->javscriptContent();
+        $cssContent = $this->cssContent();
+
+        echo str_replace(['{{content}}','{{alerts}}', '{{css}}', '{{javascript}}'], [$viewContent, $alertsContent, $cssContent, $javscriptContent], $layoutContent);
+    }
+
+    protected function alertsContent()
+    {
+
+        ob_start();
+        include_once App::$ROOT_DIR . "/views/components/alerts.php";
+        return ob_get_clean();
+    }
+
+    protected function javscriptContent()
+    {
+
+        ob_start();
+        include_once App::$ROOT_DIR . "/views/components/javascript.php";
+        return ob_get_clean();
+    }
+
+    protected function cssContent()
+    {
+
+        ob_start();
+        include_once App::$ROOT_DIR . "/views/components/css.php";
+        return ob_get_clean();
     }
 
     protected function layoutContent()
     {
-
-        // $layout = 'main';
-        // $layout = App::$app->controller ? App::$app->controller->layout : App::$app->controller;
 
         ob_start();
         include_once App::$ROOT_DIR . "/views/layouts/$this->layout.php";

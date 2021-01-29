@@ -18,6 +18,7 @@ abstract class DbModel extends Model
 
     public function save()
     {
+
         try{
             $tableName = $this->tableName();
             $attributes = $this->attributes();
@@ -30,7 +31,9 @@ abstract class DbModel extends Model
 
             $stmt->execute();
 
-            return self::lastInsertId();
+            $this->id = self::lastInsertId();
+
+            return true;
 
         } catch(PDOException $e){
             error_log($e->getMessage());

@@ -6,9 +6,10 @@ use app\system\Model;
 class Form 
 {
 
-    public static function begin($action, $method)
+    public static function begin($action, $method, $files = false)
     {
-        echo sprintf('<form action="%s" method="%s">', $action, $method);
+
+        echo sprintf('<form action="%s" method="%s" %s>', $action, $method, $files == true ? 'enctype="multipart/form-data"' : '');
         return new Form();
     }
 
