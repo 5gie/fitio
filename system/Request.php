@@ -54,6 +54,8 @@ class Request
 
             foreach($_POST as $key => $post) $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
 
+            $body['approvals'] = filter_input(INPUT_POST, 'approvals', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
         }
 
         return $body;

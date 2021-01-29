@@ -25,10 +25,12 @@ use app\system\App;
 
 <body id="auth">
 
-    <?php if ($this->session->getFlash('success')) : ?>
-        <div class="alert alert-success">
-            <?php echo $this->session->getFlash('success') ?>
-        </div>
+    <?php if ($this->session->get('flash')) : ?>
+        <?php foreach ($this->session->get('flash') as $type => $flash) : ?>
+            <div class="alert alert-<?php echo $type ?>">
+                <?php echo $this->session->getFlash($type) ?>
+            </div>
+        <?php endforeach ?>
     <?php endif; ?>
 
     {{content}}

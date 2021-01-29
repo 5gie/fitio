@@ -10,6 +10,7 @@ abstract class Model
     public const RULE_MAX = 'max';
     public const RULE_MATCH = 'match';
     public const RULE_UNIQUE = 'unique';
+    public const RULE_APPROVAL = 'approval';
 
     public function data($data)
     {
@@ -74,6 +75,12 @@ abstract class Model
                     $record = $stmt->fetchObject();
                     if($record) $this->addErrorForRule(self::RULE_UNIQUE, ['field' => $this->getLabel($attr)]);
                 }
+
+                if($ruleName == self::RULE_APPROVAL){
+
+                    foreach($this->registerApprovals as $approval) if($approval->required == 1 && !isset($this->approvals[$approval->id])) $this->addErrorForRule(self::RULE_APPROVAL);
+
+                }
          
             }
 
@@ -104,12 +111,13 @@ abstract class Model
 
         return  [
 
-            self::RULE_REQUIRED => 'This field is required',
-            self::RULE_EMAIL => 'This field must be valid email address',
-            self::RULE_MIN => 'Min length of this field must be {min}',
-            self::RULE_MAX => 'Max length of this field must be {max}',
-            self::RULE_MATCH => 'This field must be the same as {match}',
-            self::RULE_UNIQUE => 'Record with this {field} already exists' 
+            self::RULE_REQUIRED => 'Prosimy uzupełnić wszystkie dane',
+            self::RULE_EMAIL => 'Podano niepoprawny adres e-mail',
+            self::RULE_MIN => 'Minimalna ilość znaków - {min}',
+            self::RULE_MAX => 'Maksymalna ilość znaków - {max}',
+            self::RULE_MATCH => 'Hasła muszą być takie same {match}',
+            self::RULE_UNIQUE => 'Taki {field} jest już zarejestrowany',
+            self::RULE_APPROVAL => 'Należy zaakceptować wymagane zgody'
 
         ];
 

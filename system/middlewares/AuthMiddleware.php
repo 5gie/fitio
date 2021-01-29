@@ -2,25 +2,24 @@
 
 namespace app\system\middlewares;
 
-use app\system\App;
+
 use app\system\exceptions\ForbiddenException;
+use app\system\Session;
 
 class AuthMiddleware extends BaseMiddleware
 {
 
-    public array $actions = [];
+    public Session $session;
 
-    public function __construct(array $actions = [])
+    public function __construct(Session $session)
     {
-        $this->actions = $actions;
+        $this->session = $session;
     }
 
     public function execute()
     {
-        if(App::isGuest()){
 
-            if(empty($this->actions) || in_array(App::$app->controller->action, $this->actions)) throw new ForbiddenException();
-            
-        }
+        if(!$this->session->get('user')) throw new ForbiddenException();
+     
     }
 }

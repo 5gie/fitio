@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Approvals;
 use app\system\Controller;
 use app\models\User;
 use app\models\Login;
@@ -12,17 +13,13 @@ class AuthController extends Controller
     public function __construct() 
     {
         $this->setLayout('auth');
-
+        
         parent::__construct();
+
     }
 
     public function login()
     {
-
-        $this->session->setFlash('success', 'afasdfdfsaafsdfsd');
-
-        $this->response->redirect('/');
-        
 
         $login = new Login;
 
@@ -31,7 +28,7 @@ class AuthController extends Controller
             $login->data($this->request->body());
             if($login->validate() && $login->login()){
 
-                $this->session->setFlash('success', 'afasdfdfsaafsdfsd');
+                $this->session->set('user', $login->id);
 
                 $this->response->redirect('/');
 
@@ -39,8 +36,7 @@ class AuthController extends Controller
 
             } else {
 
-              
-                $error = $login->getFirstError();
+                $this->session->setFlash('danger', $login->getFirstError());
 
             }
         }
@@ -51,27 +47,52 @@ class AuthController extends Controller
 
     }
 
+    public function logout()
+    {
+
+        $this->session->remove('user');
+
+        $this->response->redirect('/');
+
+        $this->session->setFlash('info', 'Wylogowano pomyślnie');
+
+        return;
+
+    }
+
     public function register()
     {
 
-        $user = new User();
-        
+        $user = new User;
+
+        $user->registerApprovals = Approvals::findAll([], ['id' => 'DESC']);
+
         if ($this->request->post()) {
 
             $user->data($this->request->body());
 
-            if($user->validate() && $user->save()){
+            if($user->validate()){
 
-                // App::$app->session->setFlash('success', 'Thank you for registration');
-                // App::$app->response->redirect('/');
+                $id = $user->save();
+
+                if($id) $user->insertApprovals();
+
+                $this->session->setFlash('success', 'Na podany adres e-mail została wysłana wiadomośc z potwierdzeniem akceptacji konta.');
+
+                $this->response->redirect('/');
+
+                return;
             
-            }
+            } else {
 
+                $this->session->setFlash('danger', $user->getFirstError());
+
+            }
 
         }
 
         return $this->render('auth/register', [
-            'model' => $user
+            'model' => $user,
         ]);
 
     }

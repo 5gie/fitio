@@ -12,7 +12,6 @@ class App
     public static App $app;
     // public ConfigRoutes $router;
     public Database $db;
-    public ?UserModel $user;
 
     public function __construct($root, array $config, $run = false)
     {
@@ -34,15 +33,11 @@ class App
 
     }
 
-    public function login($user)
-    {
-        $this->user = $user;
-    }
 
     // public function login(UserModel $user)
     // {
     //     $this->user = $user;
-    //     $primaryKey = $user->primaryKey();
+    //     $primaryKey = $user::primaryKey();
     //     $primaryValue = $user->{$primaryKey};
     //     $this->session->set('user', $primaryValue);
     //     return true;

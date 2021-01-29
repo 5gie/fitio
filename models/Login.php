@@ -3,11 +3,11 @@
 namespace app\models;
 
 use app\models\User;
-use app\system\App;
 use app\system\Model;
 
 class Login extends Model
 {
+    public ?int $id;
     public string $email = '';
     public string $password = '';
     
@@ -22,8 +22,8 @@ class Login extends Model
     public function labels(): array
     {
         return [
-            'email' => 'E-mail',
-            'password' => 'Password'
+            'email' => 'Adres e-mail',
+            'password' => 'Hasło'
         ];
     }
 
@@ -31,21 +31,16 @@ class Login extends Model
     {
         $user = User::findOne(['email' => $this->email]);
 
-        if(!$user){
+        if(!$user || !password_verify($this->password, $user->password)){
 
-            $this->addError('email', 'User doesnt exists');
+            $this->addError('Błędny login lub hasło');
             return false;
 
         }
 
-        if(!password_verify($this->password, $user->password)){
+        $this->id = $user->id;
 
-            $this->addError('password', 'Password is incorrect');
-            return false;
-            
-        }
-
-        return App::$app->login($user);
+        return true;
         
     }
 
@@ -54,4 +49,5 @@ class Login extends Model
         if(property_exists($this, $param)) return $this->{$param};
 
     }
+
 }

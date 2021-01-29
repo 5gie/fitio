@@ -13,12 +13,19 @@ class ConfigRoutes
         $router->setNamespace('app\controllers');
 
         $router->get('/', 'SiteController@home');
-        $router->get('/login', 'AuthController@login');
-        $router->post('/login', 'AuthController@login');
+        $router->get('/logowanie', 'AuthController@login');
+        $router->post('/logowanie', 'AuthController@login');
         $router->get('/rejestracja', 'AuthController@register');
         $router->post('/rejestracja', 'AuthController@register');
         
-        // $router->get('/contact', 'SiteController@contact');
+        $router->get('/wyloguj', 'AuthController@logout');
+        
+        $router->mount('/profil', function() use ($router) {
+
+            $router->get('/', 'AccountController@profile');
+
+        });
+        
         // $router->post('/contact', 'SiteController@contact');
         // $router->post('/login', 'AuthController@login');
         // $router->get('/register', 'AuthController@register');

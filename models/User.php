@@ -11,18 +11,20 @@ class User extends UserModel
     const STATUS_ACTIVE = 1;
     const STATUS_DELETED = 2;
 
-    public string $name = '';
+    public int $id;
     public string $email = '';
     public int $status = self::STATUS_INACTIVE;
     public string $password = '';
     public string $password2 = '';
-
+    public ?array $approvals = [];
+    public array $registerApprovals;
+    
     public static function tableName(): string
     {
-        return 'users';
+        return 'user';
     }
 
-    public function primaryKey(): string
+    public static function primaryKey(): string
     {
         return 'id';
     }
@@ -32,15 +34,15 @@ class User extends UserModel
 
         $this->status = self::STATUS_INACTIVE;
         $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-        return parent::save();
+        $this->id = parent::save();
 
+        return $this->id;
     }
     
     public function rules(): array
     {
 
         return [
-            'name' => [self::RULE_REQUIRED],
             'email' => [
                 self::RULE_REQUIRED, 
                 self::RULE_EMAIL, 
@@ -52,19 +54,19 @@ class User extends UserModel
             ],
             'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 8], [self::RULE_MAX, 'max' => 24]],
             'password2' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'password']],
+            'approvals' => [self::RULE_APPROVAL]
         ];
 
     }
 
     public function attributes(): array
     {
-        return ['name', 'email', 'password', 'status'];
+        return ['email', 'password', 'status'];
     }
 
     public function labels(): array
     {
         return [
-            'name' => 'Name',
             'email' => 'E-mail',
             'password' => 'Password',
             'password2' => 'Confirm password'
@@ -74,5 +76,23 @@ class User extends UserModel
     public function getDisplayName(): string
     {
         return $this->name;
+    }
+
+    public function insertApprovals()
+    {
+        $userApprovals = new UserApprovals;
+
+        if($this->approvals){
+
+            foreach($this->approvals as $approval_id => $selected){
+
+                $userApprovals->approval_id = $approval_id;
+                $userApprovals->user_id = $this->id;
+
+                $userApprovals->save();
+
+            }
+        }
+
     }
 }

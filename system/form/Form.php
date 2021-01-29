@@ -27,4 +27,9 @@ class Form
         return new TextareaField($model, $attribute);
     }
 
+    public function approval(Model $model, $attribute)
+    {
+        return new Approval($model, $attribute);
+    }
+
 }

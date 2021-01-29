@@ -17,7 +17,6 @@ class SiteController extends Controller
     {
         $this->title = 'Fitio';
         $this->addJs('home.js');
-        
 
         return $this->render('home');
     }

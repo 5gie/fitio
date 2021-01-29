@@ -6,14 +6,27 @@ use app\system\form\Form;
         <h1>Register</h1>
         <?php $form = Form::begin('', 'POST') ?>
 
-        <?php echo $form->inputField($model, 'name') ?>
         <?php echo $form->inputField($model, 'email') ?>
         <?php echo $form->inputField($model, 'password')->passwordField() ?>
         <?php echo $form->inputField($model, 'password2')->passwordField() ?>
 
+        <?php if($model->registerApprovals): ?>
+
+            <?php foreach($model->registerApprovals as $approval): ?>
+    <!-- TODO: $form->apprvoval -->
+                <label>
+                    <input type="checkbox" name="approvals[<?php echo $approval->id ?>]" <?php echo isset($model->approvals[$approval->id]) ? 'checked' : '' ?>>
+                    <?php echo $approval->title ?> 
+                    <?php if($approval->required == 1): ?><span class="required">*</span> <?php endif ?> 
+                </label><br>
+
+            <?php endforeach ?>
+
+        <?php endif ?>
+
         <footer class="form-footer">
             <button type="submit" class="btn btn-primary">Zarejestruj</button>
-            <span>Posiadasz już konto? <a class="text-light" href="/login">Zaloguj się</a></span>
+            <span>Posiadasz już konto? <a class="text-light" href="/logowanie">Zaloguj się</a></span>
         </footer>
     </div>
 </div>
