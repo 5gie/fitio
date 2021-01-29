@@ -25,6 +25,8 @@ class ConfigRoutes
             $router->get('/', 'AccountController@profile');
             $router->get('/dane', 'AccountController@userData');
             $router->post('/dane', 'AccountController@userData');
+            $router->get('/haslo', 'AccountController@userPassword');
+            $router->post('/haslo', 'AccountController@userPassword');
 
         });
         

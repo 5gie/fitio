@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Approvals;
 use app\models\User;
+use app\models\UserApprovals;
 use app\models\UserData;
 use app\system\Controller;
 use app\system\helpers\Uploader;
@@ -63,7 +65,7 @@ class AccountController extends Controller
 
                 $uploader = new Uploader;
 
-                if($uploader->addUserImage($this->request->file('image'))){
+                if($uploader->addUserImage(dirname(__DIR__) . '/images/user', 'image')){
 
                     $userData->image = $uploader->name;
 
@@ -89,6 +91,51 @@ class AccountController extends Controller
 
         return $this->render('account/data',[
             'model' => $userData
+        ]);
+
+    }
+
+    public function userPassword()
+    {
+
+        $user = new User;
+
+        $getUser = User::findOne(['id' => $this->session->get('user')]);
+
+        if ($this->request->post()) {
+
+            if($getUser) $user->data($getUser);
+            
+            $user->data($this->request->body());
+
+            if($user->validate() && $user->update(['id' => $user->id])){
+
+                $this->session->setFlash('success', 'Zaktualizowano pomyślnie');
+
+            } else {
+
+                $this->session->setFlash('danger', $user->getFirstError());
+
+            }
+
+        }
+
+        return $this->render('account/password', [
+            'model' => $user
+        ]);
+
+    }
+
+    public function approvals()
+    {
+
+        $approvals = Approvals::findAll([], ['id' => 'DESC']);
+
+        $userApprovals = UserApprovals::findAll(['user_id' => $this->session->get('user')]);
+
+        return $this->render('account/password', [
+            'approvals' => $approvals,
+            'userApprovals' => $userApprovals
         ]);
 
     }

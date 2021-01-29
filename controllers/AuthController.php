@@ -71,9 +71,7 @@ class AuthController extends Controller
 
             $user->data($this->request->body());
 
-            if($user->validate() && $user->save()){
-
-                if($user->id) $user->insertApprovals();
+            if($user->validate() && $user->validateEmail() && $user->save() && $user->insertApprovals()){
 
                 $this->session->setFlash('success', 'Na podany adres e-mail została wysłana wiadomośc z potwierdzeniem akceptacji konta.');
 

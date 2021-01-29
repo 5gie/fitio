@@ -1,6 +1,8 @@
 <?php
 namespace app\system;
 
+use app\system\form\Approval;
+
 abstract class Model
 {
 

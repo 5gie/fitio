@@ -17,8 +17,8 @@ class User extends UserModel
     public string $password = '';
     public string $password2 = '';
     public ?array $approvals = [];
-    public array $registerApprovals;
-    
+    public array $registerApprovals = [];
+
     public static function tableName(): string
     {
         return 'user';
@@ -43,12 +43,7 @@ class User extends UserModel
         return [
             'email' => [
                 self::RULE_REQUIRED, 
-                self::RULE_EMAIL, 
-                [
-                    self::RULE_UNIQUE,
-                    'class' => self::class,
-                    // 'attribute' => 'email' 
-                ]
+                self::RULE_EMAIL
             ],
             'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 8], [self::RULE_MAX, 'max' => 24]],
             'password2' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'password']],
@@ -80,6 +75,8 @@ class User extends UserModel
     {
         $userApprovals = new UserApprovals;
 
+        $output = true;
+
         if($this->approvals){
 
             foreach($this->approvals as $approval_id => $selected){
@@ -87,10 +84,22 @@ class User extends UserModel
                 $userApprovals->approval_id = $approval_id;
                 $userApprovals->user_id = $this->id;
 
-                $userApprovals->save();
+                if(!$userApprovals->save()) $output = false;
 
             }
         }
+
+        return $output;
+
+    }
+
+    public function validateEmail()
+    {
+
+        $user = self::findOne(['email' => $this->email]);
+
+        if(!$user) return true;
+        else $this->addError('Taki adres e-mail jest juz zarejestrowany'); return false;
 
     }
 }
