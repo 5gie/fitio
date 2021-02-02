@@ -20,21 +20,43 @@ class ConfigRoutes
         
         $router->get('/wyloguj', 'AuthController@logout');
         
-        $router->mount('/profil', function() use ($router) {
+        $router->mount('/konto', function() use ($router) {
 
-            $router->get('/', 'AccountController@profile');
+            $router->get('/', 'AccountController@account');
             $router->get('/dane', 'AccountController@userData');
             $router->post('/dane', 'AccountController@userData');
             $router->get('/haslo', 'AccountController@userPassword');
             $router->post('/haslo', 'AccountController@userPassword');
+            $router->get('/zgody', 'AccountController@approvals');
+            $router->post('/zgody', 'AccountController@approvals');
+
+            $router->mount('/wiadomosci', function () use ($router) {
+
+                $router->get('/', 'MessageController@listConversations');
+                $router->get('/{id}', 'MessageController@conversation');
+                $router->post('/{id}', 'MessageController@conversation');
+
+            });
 
         });
-        
+
+        $router->mount('/profil/{id}', function() use ($router) {
+            
+            $router->before('GET|POST', '/', 'ProfileController@auth');
+            $router->before('GET|POST', '/.*', 'ProfileController@auth');
+            
+            $router->get('/wiadomosc', 'MessageController@newConversation');
+            $router->post('/wiadomosc', 'MessageController@newConversation');
+            
+            $router->get('/', 'ProfileController@profile');
+            
+        });
+   
         // $router->post('/contact', 'SiteController@contact');
         // $router->post('/login', 'AuthController@login');
         // $router->get('/register', 'AuthController@register');
         // $router->get('/logout', 'AuthController@logout');
-
+        
         return $router->run();
     }
 }

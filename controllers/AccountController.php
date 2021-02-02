@@ -39,10 +39,14 @@ class AccountController extends Controller
         
     }
 
-    public function profile()
+    public function account()
     {
 
-        return $this->render('account/profile');
+        $user = User::findOne(['id' => $this->session->get('user')]);
+        
+        $user->data = UserData::findOne(['user_id' => $user->id]);
+
+        return $this->render('account/account',['user' => $user]);
 
     }
 
@@ -59,13 +63,13 @@ class AccountController extends Controller
 
         if ($this->request->post()) {
 
-            $userData->data($this->request->body());
-
             if($this->request->file('image')){
 
                 $uploader = new Uploader;
 
-                if($uploader->addUserImage(dirname(__DIR__) . '/images/user', 'image')){
+                if($uploader->addUserImage(dirname(__DIR__) . USER_IMG_ROOT, 'image')){
+
+                    if($userData->image) if (!unlink(dirname(__DIR__) . USER_IMG_ROOT . $userData->image)) error_log('Błąd przy usuwanie zdjecia uzytkownika');
 
                     $userData->image = $uploader->name;
 
@@ -76,6 +80,8 @@ class AccountController extends Controller
                 }
 
             }
+
+            $userData->data($this->request->body());
             
             if ($userData->validate() && ($data ? $userData->update(['user_id' => $userData->user_id]) : $userData->save())) {
 
@@ -128,15 +134,47 @@ class AccountController extends Controller
 
     public function approvals()
     {
+        $model = new UserApprovals;
 
-        $approvals = Approvals::findAll([], ['id' => 'DESC']);
+        $model->user_id = $this->session->get('user');
 
-        $userApprovals = UserApprovals::findAll(['user_id' => $this->session->get('user')]);
+        $model->registerApprovals = Approvals::findAll([], ['id' => 'DESC']);
 
-        return $this->render('account/password', [
-            'approvals' => $approvals,
-            'userApprovals' => $userApprovals
+        if ($this->request->post()) {
+
+            $model->data($this->request->body());
+
+            if($model->validate()){
+                
+                if($model->delete(['user_id' => $model->user_id])) $model->save();
+                
+            } else {
+
+                $this->session->setFlash('danger', $model->getFirstError());
+
+            }
+
+        }
+
+        $model->userApprovals = UserApprovals::findAll(['user_id' => $model->user_id]);
+
+        return $this->render('account/approvals', [
+            'model' => $model
         ]);
+
+    }
+
+    public function userDelete()
+    {
+
+        if($this->request->post())
+        {
+
+            
+
+        }
+
+        return $this->render('account/delete');
 
     }
 

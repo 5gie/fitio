@@ -4,17 +4,25 @@ use app\system\form\Form;
 ?>
 <div class="container">
     <div class="form-page">
-        <h1>Twoje dane</h1>
-        <?php $form = Form::begin('', 'POST', true) ?>
+        <h1>Konwersacja z użytkownikiem #<?php echo $sender->id !== $this->session->get('user') ? $sender->id : $recipient->id ?></h1>
+        <div class="conversation-messages w-100">
+            <?php foreach ($messages as $message) : ?>
+                <div class="message card card-body bg-dark text-light mb-3 <?php echo $message->user_msg ? 'text-right ml-5' : 'mr-5' ?>">
+                    <h5><?php echo $message->user_type == 'sender' ? $sender->email : $recipient->email ?></h5>
+                    <span><?php echo $message->created_at ?></span>
+                    <p><?php echo $message->content ?></p>
+                </div>
+            <?php endforeach ?>
+        </div>
+        <?php $form = Form::begin('', 'POST') ?>
 
-        <?php echo $form->inputField($model, 'name') ?>
         <?php echo $form->textareaField($model, 'content') ?>
-        <?php echo $form->inputField($model, 'image')->fileField() ?>
 
         <footer class="form-footer">
-            <button type="submit" class="btn btn-primary">Aktualizuj</button>
+            <button type="submit" class="btn btn-primary">Wyślij</button>
         </footer>
         <?php echo Form::end() ?>
+
     </div>
 </div>
 <style>

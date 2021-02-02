@@ -2,6 +2,8 @@
 
 namespace app\system;
 
+use app\system\form\Form;
+
 abstract class View
 {
 
@@ -9,6 +11,7 @@ abstract class View
     public string $layout = 'main';
     public array $css = [];
     public array $js = [];
+    public ?Form $form;
 
     public function render($view, $data = [])
     {
@@ -28,6 +31,8 @@ abstract class View
         $alertsContent = $this->alertsContent();
         $javscriptContent = $this->javscriptContent();
         $cssContent = $this->cssContent();
+
+        $this->form = new Form;
 
         echo str_replace(['{{content}}','{{alerts}}', '{{css}}', '{{javascript}}'], [$viewContent, $alertsContent, $cssContent, $javscriptContent], $layoutContent);
     }

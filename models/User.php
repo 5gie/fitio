@@ -71,27 +71,6 @@ class User extends UserModel
         return $this->name;
     }
 
-    public function insertApprovals()
-    {
-        $userApprovals = new UserApprovals;
-
-        $output = true;
-
-        if($this->approvals){
-
-            foreach($this->approvals as $approval_id => $selected){
-
-                $userApprovals->approval_id = $approval_id;
-                $userApprovals->user_id = $this->id;
-
-                if(!$userApprovals->save()) $output = false;
-
-            }
-        }
-
-        return $output;
-
-    }
 
     public function validateEmail()
     {

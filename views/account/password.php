@@ -12,9 +12,9 @@ use app\system\form\Form;
         <footer class="form-footer">
             <button type="submit" class="btn btn-primary">Aktualizuj</button>
         </footer>
+        <?php echo Form::end() ?>
     </div>
 </div>
-<?php echo Form::end() ?>
 <style>
     .form-footer {
         display: flex;

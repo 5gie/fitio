@@ -21,20 +21,6 @@ $config = [
 
 $app = new App(dirname(__DIR__), $config, true);
 
-// $app->router->get('/', 'home');
-// $app->router->get('/contact', [SiteController::class, 'contact']);
-// $app->router->post('/contact', [SiteController::class, 'contact']);
-// $app->router->get('/login', [AuthController::class, 'login']);
-// $app->router->post('/login', [AuthController::class, 'login']);
-// $app->router->get('/register', [AuthController::class, 'register']);
-// $app->router->post('/register', [AuthController::class, 'register']);
-// $app->router->get('/logout', [AuthController::class, 'logout']);
-// $app->router->get('/profile', [AuthController::class, 'profile']);
-
-
-// $app->run();
-
-
 function debug($var)
 {
     echo "<pre style='padding:10px;font-size:12px;background:#2D2D2D;color:#d0d0d0;'>";

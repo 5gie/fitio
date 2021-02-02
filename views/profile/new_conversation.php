@@ -4,25 +4,13 @@ use app\system\form\Form;
 ?>
 <div class="container">
     <div class="form-page">
-        <h1>Zgody</h1>
+        <h1>Wyślij wiadomość - użytkownik #<?php echo $user ?></h1>
         <?php $form = Form::begin('', 'POST') ?>
 
-        <?php if ($model->registerApprovals) : ?>
-
-            <?php foreach ($model->registerApprovals as $approval) : ?>
-                <!-- TODO: $form->apprvoval -->
-                <label>
-                    <input type="checkbox" name="approvals[<?php echo $approval->id ?>]" <?php if(isset($model->userApprovals)) foreach ($model->userApprovals as $checked) if ($checked->approval_id == $approval->id) echo 'checked' ?>>
-                    <?php echo $approval->title ?>
-                    <?php if ($approval->required == 1) : ?><span class="required">*</span> <?php endif ?>
-                </label><br>
-
-            <?php endforeach ?>
-
-        <?php endif ?>
+        <?php echo $form->textareaField($message, 'content') ?>
 
         <footer class="form-footer">
-            <button type="submit" class="btn btn-primary">Aktualizuj</button>
+            <button type="submit" class="btn btn-primary">Wyślij</button>
         </footer>
         <?php echo Form::end() ?>
     </div>

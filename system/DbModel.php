@@ -31,7 +31,7 @@ abstract class DbModel extends Model
 
             $stmt->execute();
 
-            $this->id = self::lastInsertId();
+            if(property_exists($this, 'id')) $this->id = self::lastInsertId();
 
             return true;
 
@@ -78,16 +78,42 @@ abstract class DbModel extends Model
         }
     }
 
+    public function delete($where)
+    {
+        try {
+
+            $tableName = $this->tableName();
+
+            $query = implode(" AND ", array_map(fn ($attr) => "$attr = :$attr", array_keys($where)));
+
+            $stmt = self::prepare("DELETE FROM $tableName WHERE $query");
+
+            foreach ($where as $key => $item) {
+                $stmt->bindValue(":$key", $item);
+            }
+
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
     public static function prepare($sql)
     {
         return App::$app->db->pdo->prepare($sql);
     }
 
-    public static function findOne($where)
+    public static function findOne($where, array $order = [])
     {
         $tableName = static::tableName();
         $attributes = array_keys($where);
         $query = implode("AND ", array_map(fn($attr) => "$attr = :$attr", $attributes));
+
+        if (!empty($order)) foreach ($order as $item => $type) $query .= " ORDER BY $item $type";
 
         $stmt = self::prepare("SELECT * FROM $tableName WHERE $query");
         foreach($where as $key => $item){
@@ -113,6 +139,7 @@ abstract class DbModel extends Model
         if ($limit) $query .= " LIMIT $offset, $limit";
 
         $stmt = self::prepare("SELECT * FROM $tableName $query");
+        
         foreach ($where as $key => $item) {
             $stmt->bindValue(":$key", $item);
         }
@@ -120,5 +147,7 @@ abstract class DbModel extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
+
+    
 
 }

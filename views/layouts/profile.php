@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,14 +16,15 @@
 
 <body id="home">
 
-    <?php if($this->session->get('user')): ?>
+    <?php if ($this->session->get('user')) : ?>
         <a class="btn btn-primary logout" href="/wyloguj">Wyloguj</a>
     <?php endif ?>
 
     {{alerts}}
     {{content}}
-   
+
     {{javascript}}
 
 </body>
+
 </html>

@@ -32,13 +32,13 @@ class Uploader
         $new_filename = uniqid();
         $file->setName($new_filename);
 
-        $this->name = $new_filename;
-
         // TODO: resize/convert to webp;
-
+        
         try {
-
+            
             $file->upload();
+
+            $this->name = $file->getNameWithExtension();
 
             return true;
             

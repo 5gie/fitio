@@ -28,9 +28,9 @@ use app\system\form\Form;
             <button type="submit" class="btn btn-primary">Zarejestruj</button>
             <span>Posiadasz już konto? <a class="text-light" href="/logowanie">Zaloguj się</a></span>
         </footer>
+        <?php echo Form::end() ?>
     </div>
 </div>
-<?php echo Form::end() ?>
 <style>
     .form-footer {
         display: flex;

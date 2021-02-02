@@ -6,6 +6,7 @@ use app\models\Approvals;
 use app\system\Controller;
 use app\models\User;
 use app\models\Login;
+use app\models\UserApprovals;
 
 class AuthController extends Controller
 {
@@ -30,7 +31,7 @@ class AuthController extends Controller
 
                 $this->session->set('user', $login->id);
 
-                $this->response->redirect('/profil');
+                $this->response->redirect('/konto');
 
                 return;
 
@@ -71,7 +72,12 @@ class AuthController extends Controller
 
             $user->data($this->request->body());
 
-            if($user->validate() && $user->validateEmail() && $user->save() && $user->insertApprovals()){
+            if($user->validate() && $user->validateEmail() && $user->save()){
+
+                $userApprovals = new UserApprovals;
+                $userApprovals->user_id = $user->id;
+                $userApprovals->data($this->request->body());
+                if(!$userApprovals->save()) error_log('Błąd przy dodawaniu user approvals');
 
                 $this->session->setFlash('success', 'Na podany adres e-mail została wysłana wiadomośc z potwierdzeniem akceptacji konta.');
 

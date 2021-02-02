@@ -1,7 +1,7 @@
 <?php
 namespace app\system;
 
-use app\system\form\Approval;
+use app\models\User;
 
 abstract class Model
 {
@@ -14,6 +14,7 @@ abstract class Model
     public const RULE_UNIQUE = 'unique';
     public const RULE_APPROVAL = 'approval';
     public const RULE_IMAGE = 'image';
+    public const RULE_USER = 'user';
 
     public function data($data)
     {
@@ -84,6 +85,11 @@ abstract class Model
                     foreach($this->registerApprovals as $approval) if($approval->required == 1 && !isset($this->approvals[$approval->id])) $this->addErrorForRule(self::RULE_APPROVAL);
 
                 }
+                if($ruleName == self::RULE_USER){
+
+                    if(!User::findOne(['id' => $value])) $this->addErrorForRule(self::RULE_USER);
+
+                }
          
             }
 
@@ -120,7 +126,8 @@ abstract class Model
             self::RULE_MAX => 'Maksymalna ilość znaków - {max}',
             self::RULE_MATCH => 'Hasła muszą być takie same {match}',
             self::RULE_UNIQUE => 'Taki {field} jest już zarejestrowany',
-            self::RULE_APPROVAL => 'Należy zaakceptować wymagane zgody'
+            self::RULE_APPROVAL => 'Należy zaakceptować wymagane zgody',
+            self::RULE_USER => 'Taki użytkownik nie istnieje'
 
         ];
 

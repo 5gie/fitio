@@ -8,8 +8,10 @@ class Session
     protected const FLASH_KEY = 'flash';
 
     public function __construct() 
-    { 
-        session_start();
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
         // $flashMessages = $_SESSION[self::FLASH_KEY] ?? [];
         // foreach ($flashMessages as $key => &$flashMessage) {
         //     $flashMessage['remove'] = true;
