@@ -81,4 +81,15 @@ class User extends UserModel
         else $this->addError('Taki adres e-mail jest juz zarejestrowany'); return false;
 
     }
+
+    public static function getUserData($user_id)
+    {
+
+        $user = self::findOne(['id' => $user_id]);
+
+        if($user) $user->content = UserData::findOne(['user_id' => $user->id]);
+
+        return $user;
+        
+    }
 }

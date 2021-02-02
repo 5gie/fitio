@@ -7,5 +7,7 @@
             <p><?php echo $user->data->content ?></p>
         <?php endif ?>
         <a href="/profil/<?php echo $user->id ?>/wiadomosc">Wyślij wiadomość</a>
+        <br>
+        <a href="/profil/<?php echo $user->id ?>/opinie">Opinie użytkownika</a>
     </div>
 </div>

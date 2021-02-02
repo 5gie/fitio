@@ -2,7 +2,7 @@
 
 use app\system\App;
 
-class m0006_message
+class m0007_user_delete
 {
     public function up()
     {
@@ -11,9 +11,9 @@ class m0006_message
         $query = "CREATE TABLE user_delete (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
-            status TEXT NOT NULL,
+            status TINYINT NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
         $db->pdo->exec($query);
     }

@@ -4,13 +4,12 @@ namespace app\models;
 
 use app\system\DbModel;
 
-class UserData extends DbModel
+class UserDelete extends DbModel
 {
 
     public int $user_id;
-    public string $name = '';
-    public string $content = '';
-    public string $image = '';
+    public int $status = 0;
+    public string $password = '';
 
     public static function tableName(): string
     {
@@ -30,26 +29,16 @@ class UserData extends DbModel
     public function rules(): array
     {
 
-        return [
-            'name' => [[self::RULE_MIN, 'min' => 8], [self::RULE_MAX, 'max' => 36]],
-            'content' => [[self::RULE_MIN, 'min' => 10], [self::RULE_MAX, 'max' => 1000]],
-            'image' => [self::RULE_IMAGE],
-        ];
+        return [];
     }
 
     public function attributes(): array
     {
-        return ['user_id', 'name', 'content', 'image'];
+        return ['user_id'];
     }
 
     public function labels(): array
     {
-
-        // 'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 8], [self::RULE_MAX, 'max' => 24]],
-        return [
-            'name' => 'Imię i Nazwisko',
-            'content' => 'Twój opis',
-            'image' => 'Zdjęcie profilowe / logo firmy'
-        ];
+        return ['password' => 'Wprowadź hasło'];
     }
 }

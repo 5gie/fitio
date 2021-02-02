@@ -47,6 +47,13 @@ class InputField extends BaseField
         return $this;
 
     }
+    public function numberField()
+    {
+
+        $this->type = self::TYPE_NUMBER;
+        return $this;
+
+    }
 
     public function renderInput(): string
     {

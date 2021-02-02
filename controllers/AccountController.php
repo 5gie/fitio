@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 use app\models\Approvals;
+use app\models\Review;
 use app\models\User;
 use app\models\UserApprovals;
 use app\models\UserData;
+use app\models\UserDelete;
 use app\system\Controller;
 use app\system\helpers\Uploader;
 use app\system\middlewares\AuthMiddleware;
@@ -49,6 +51,7 @@ class AccountController extends Controller
         return $this->render('account/account',['user' => $user]);
 
     }
+    
 
     public function userData()
     {
@@ -167,14 +170,67 @@ class AccountController extends Controller
     public function userDelete()
     {
 
-        if($this->request->post())
+        $userDelete = new UserDelete;
+
+        $delete = UserDelete::findOne(['user_id' => $this->session->get('user')]);
+
+        $user = User::findOne(['id' => $this->session->get('user')]);
+
+        if($this->request->post() && $user)
         {
 
-            
+            if(!$delete){
+
+                $userDelete->data($this->request->body());
+    
+                if(password_verify($userDelete->password, $user->password)){
+    
+                    $userDelete->user_id = $user->id;
+    
+                    if($userDelete->save()){
+    
+                        $userDelete->password = '';
+    
+                        $this->session->setFlash('success', 'Prośba o usunięcie konta została pomyślnie wysłana i zostanie rozpatrzona najszybciej jak to możliwe.');
+    
+                    }
+    
+                } else {
+    
+                    $this->session->setFlash('danger', 'Podano nieprawidłowe hasło');
+    
+                }
+
+            } else {
+
+                $this->session->setFlash('warning', 'Prośba usunięcie konta została już wysłana. Zostanie rozpatrzona najszybciej jak to możliwe.');
+
+            }
 
         }
 
-        return $this->render('account/delete');
+        return $this->render('account/delete',[
+            'delete' => $delete,
+            'model' => $userDelete
+        ]);
+
+    }
+
+    public function userReviews()
+    {
+
+        $reviews = Review::findAll(['profile_id' => $this->session->get('user'), 'status' => 1], ['id' => 'DESC']);
+
+        if($reviews) $reviews = array_map(function($review){
+
+            $review->user = User::getUserData($review->user_id);
+            return $review;
+            
+        },$reviews);
+
+        return $this->render('account/reviews', [
+            'reviews' => $reviews
+        ]);
 
     }
 

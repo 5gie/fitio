@@ -111,7 +111,7 @@ abstract class DbModel extends Model
     {
         $tableName = static::tableName();
         $attributes = array_keys($where);
-        $query = implode("AND ", array_map(fn($attr) => "$attr = :$attr", $attributes));
+        $query = implode(" AND ", array_map(fn($attr) => "$attr = :$attr", $attributes));
 
         if (!empty($order)) foreach ($order as $item => $type) $query .= " ORDER BY $item $type";
 
@@ -132,7 +132,7 @@ abstract class DbModel extends Model
         $query = '';
 
         $attributes = array_keys($where);
-        if(!empty($where)) $query = " WHERE " . implode("AND ", array_map(fn ($attr) => "$attr = :$attr", $attributes));
+        if(!empty($where)) $query = " WHERE " . implode(" AND ", array_map(fn ($attr) => "$attr = :$attr", $attributes));
 
         if (!empty($order)) foreach ($order as $item => $type) $query .= " ORDER BY $item $type";
 

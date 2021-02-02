@@ -29,6 +29,10 @@ class ConfigRoutes
             $router->post('/haslo', 'AccountController@userPassword');
             $router->get('/zgody', 'AccountController@approvals');
             $router->post('/zgody', 'AccountController@approvals');
+            $router->get('/usun', 'AccountController@userDelete');
+            $router->post('/usun', 'AccountController@userDelete');
+            $router->get('/opinie', 'AccountController@userReviews');
+            $router->post('/opinie', 'AccountController@userReviews');
 
             $router->mount('/wiadomosci', function () use ($router) {
 
@@ -47,6 +51,10 @@ class ConfigRoutes
             
             $router->get('/wiadomosc', 'MessageController@newConversation');
             $router->post('/wiadomosc', 'MessageController@newConversation');
+            
+            $router->get('/opinie', 'ProfileController@reviews');
+            $router->get('/opinie/dodaj', 'ProfileController@addReview');
+            $router->post('/opinie/dodaj', 'ProfileController@addReview');
             
             $router->get('/', 'ProfileController@profile');
             

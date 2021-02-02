@@ -15,6 +15,9 @@ abstract class Model
     public const RULE_APPROVAL = 'approval';
     public const RULE_IMAGE = 'image';
     public const RULE_USER = 'user';
+    public const RULE_INT = 'int';
+    public const RULE_INT_MIN = 'int_min';
+    public const RULE_INT_MAX = 'int_max';
 
     public function data($data)
     {
@@ -90,6 +93,9 @@ abstract class Model
                     if(!User::findOne(['id' => $value])) $this->addErrorForRule(self::RULE_USER);
 
                 }
+                if($ruleName === self::RULE_INT && !is_numeric($value)) $this->addErrorForRule(self::RULE_INT, ['field' => $this->getLabel($attr)]);
+                if($ruleName === self::RULE_INT_MIN && $value < $rule['min']) $this->addErrorForRule(self::RULE_INT, ['field' => $this->getLabel($attr)]);
+                if($ruleName === self::RULE_INT_MAX && $value > $rule['max']) $this-> addErrorForRule(self::RULE_INT, ['field' => $this->getLabel($attr)]);
          
             }
 
@@ -127,7 +133,8 @@ abstract class Model
             self::RULE_MATCH => 'Hasła muszą być takie same {match}',
             self::RULE_UNIQUE => 'Taki {field} jest już zarejestrowany',
             self::RULE_APPROVAL => 'Należy zaakceptować wymagane zgody',
-            self::RULE_USER => 'Taki użytkownik nie istnieje'
+            self::RULE_USER => 'Taki użytkownik nie istnieje',
+            self::RULE_INT => 'Podano błędną wartność: {field}'
 
         ];
 
