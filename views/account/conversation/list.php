@@ -9,18 +9,16 @@
                     <table class="table">
                         <tr>
                             <th>ID</th>
-                            <th>Sender</th>
-                            <th>Recipient</th>
+                            <th>User</th>
                             <th>Title</th>
                             <th>Last</th>
                             <th>Created</th>
-                            <th class="text-right">Narzędzia</th>
+                            <th class="text-right">Tools</th>
                         </tr>
                         <?php foreach ($conversations as $conversation) : ?>
                             <tr>
                                 <td><?php echo $conversation->id ?></td>
-                                <td><?php echo $conversation->sender ?></td>
-                                <td><?php echo $conversation->recipient ?></td>
+                                <td><a href="/profile/<?php echo $conversation->user->id ?>"><?php echo $conversation->user->email ?></a></td>
                                 <td><?php echo $conversation->message->content ?></td>
                                 <td><?php echo $conversation->message->created_at ?></td>
                                 <td><?php echo $conversation->created_at ?></td>

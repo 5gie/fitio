@@ -9,6 +9,7 @@ use app\system\form\Form;
         <?php echo $form->inputField($model, 'email') ?>
         <?php echo $form->inputField($model, 'password')->passwordField() ?>
         <?php echo $form->inputField($model, 'password2')->passwordField() ?>
+        <?php echo $form->SelectField($model, 'type', $model->getTypeOptions()) ?>
 
         <?php if($model->registerApprovals): ?>
 

@@ -12,6 +12,7 @@ class Conversation extends DbModel
     public int $sender;
     public int $recipient;
     public ?Message $message;
+    public ?User $user;
 
     public static function tableName(): string
     {

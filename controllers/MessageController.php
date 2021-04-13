@@ -12,6 +12,10 @@ use Exception;
 class MessageController extends Controller
 {
 
+    private User $sender;
+    private User $recipient;
+    private Conversation $conversation;
+
     public function __construct()
     {
 
@@ -47,6 +51,7 @@ class MessageController extends Controller
             if ($this->request->post()) {
 
                 $conversation->sender = $this->session->get('user');
+
                 $conversation->recipient = $id;
 
                 if ($conversation->validate() && $conversation->save()) {
@@ -100,22 +105,36 @@ class MessageController extends Controller
 
         $conversations = Conversation::getList($this->session->get('user'));
 
-        if($conversations){
-
-            $conversations = array_map(function($conversation) {
-    
-                $conversation->message = Message::findOne(['conversation_id' => $conversation->id], ['id' => 'ASC']);
-
-                return $conversation;
-    
-            }, $conversations);
-
-        }
+        if($conversations) $conversations = $this->mapConversationMessages($conversations);
 
         return $this->render('account/conversation/list', [
             'conversations' => $conversations
         ]);
 
+    }
+
+    public function mapConversationMessages(array $conversations): array
+    {
+
+        $conversations = array_map(function($conversation) {
+    
+            $conversation->message = Message::findOne(['conversation_id' => $conversation->id], ['id' => 'ASC']);
+
+            if($conversation->sender != $this->session->get('user')) $conversation->user = User::findOne(['id' => $conversation->sender]);
+
+            if($conversation->recipient != $this->session->get('user')) $conversation->user = User::findOne(['id' => $conversation->recipient]);
+
+            return $conversation;
+
+        }, $conversations);
+
+        return $conversations;
+
+    }
+
+    public function conversationAuth():bool
+    {
+        return $this->conversation->sender == $this->session->get('user') || $this->conversation->recipient == $this->session->get('user');
     }
 
     public function conversation($conversation_id)
@@ -125,63 +144,27 @@ class MessageController extends Controller
 
         $messages = [];
 
-        $sender = false;
+        $this->conversation = Conversation::findOne(['id' => $conversation_id]);
 
-        $recipient = false;
+        if($this->conversation && $this->conversationAuth()){
 
-        $conversation = Conversation::findOne(['id' => $conversation_id]);
+            $model->conversation_id = $this->conversation->id;
 
-        if($conversation && ($conversation->sender == $this->session->get('user') || $conversation->recipient == $this->session->get('user'))){
+            if($this->setConversationUsers()){
 
-            $sender = User::findOne(['id' => $conversation->sender]);
-            $recipient = User::findOne(['id' => $conversation->recipient]);
-
-            if($sender && $recipient){
-
-                if($this->request->post()){
-
-                    $model->conversation_id = $conversation->id;
-                    $model->data($this->request->body());
-                    $model->user_id = $this->session->get('user');
-
-                    if ($model->validate() && $model->save()) {
-
-                        $model->content = '';
-
-                        $this->session->setFlash('success', 'Wiadomość została pomyślnie wysłana');
-
-                    } else {
-
-                        $this->session->setFlash('danger', $model->getFirstError());
-
-                    }
-                    
-                }
+                if($this->request->post()) $this->sendConversationMessage($model);
 
                 $messages = Message::findAll(['conversation_id' => $conversation_id], ['id' => 'DESC'], 0, 3);
 
-                if($messages) {
+                if($messages) $messages = $this->mapMessages($messages);
 
-                    $messages = array_reverse(array_map(function($msg) use ($sender){
-
-                        $msg->user_msg = $msg->user_id == $this->session->get('user') ? true : false;
-
-                        $msg->user_type = $msg->user_id == $sender->id ? 'sender' : 'recipient'; 
-
-                        return $msg;
-
-                    }, $messages));
-
-                }
-
-            } else{
+            } else {
 
                 $this->session->setFlash('error', 'Użytkownik nie istnieje lub został usunięty.');
 
                 $this->response->referer();
 
             }
-
 
         } else {
 
@@ -192,13 +175,59 @@ class MessageController extends Controller
         }
 
         return $this->render('account/conversation', [
-            'conversation' => $conversation,
+            'conversation' => $this->conversation,
             'messages' => $messages,
             'model' => $model,
-            'sender' => $sender,
-            'recipient' => $recipient
+            'sender' => $this->sender,
+            'recipient' => $this->recipient
         ]);
         
+
+    }
+
+    public function setConversationUsers(): bool
+    {
+
+        $this->sender = User::findOne(['id' => $this->conversation->sender]);
+        $this->recipient = User::findOne(['id' => $this->conversation->recipient]);
+
+        return $this->sender && $this->recipient ? true : false;
+
+    }
+
+    public function sendConversationMessage(Message $model)
+    {
+
+        $model->data($this->request->body());
+        $model->user_id = $this->session->get('user');
+
+        if ($model->validate() && $model->save()) {
+
+            $model->content = '';
+
+            $this->session->setFlash('success', 'Wiadomość została pomyślnie wysłana');
+
+        } else {
+
+            $this->session->setFlash('danger', $model->getFirstError());
+
+        }
+
+    }
+
+    public function mapMessages(array $messages): array
+    {
+        $messages = array_reverse(array_map(function($msg){
+
+            $msg->user_msg = $msg->user_id == $this->session->get('user') ? true : false;
+
+            $msg->user_type = $msg->user_id == $this->sender->id ? 'sender' : 'recipient'; 
+
+            return $msg;
+
+        }, $messages));
+
+        return $messages;
 
     }
 

@@ -35,7 +35,7 @@ class ProfileController extends Controller
 
         } else {
 
-            $this->session->setFlash('error', 'Taki użytkownik nie istnieje lub został usunięty.');
+            $this->session->setFlash('danger', 'Taki użytkownik nie istnieje lub został usunięty.');
 
             $this->response->redirect('/');
 
@@ -46,11 +46,12 @@ class ProfileController extends Controller
     public function auth($id)
     {
         if($this->session->get('user') == $id) $this->response->redirect('/konto');
+        return;
     }
 
     public function profile($id)
     {
-        
+
         if($this->checkUser($id)){
 
             return $this->render('profile/profile', [
@@ -71,7 +72,7 @@ class ProfileController extends Controller
 
         if ($this->checkUser($id)) {
 
-            $this->user->reviews = Review::getReviews(['profile_id' => $this->user->id]);
+            $this->user->reviews = Review::getReviews(['profile_id' => $this->user->id, 'status' => 1]);
 
             return $this->render('profile/reviews', [
                 'user' => $this->user
@@ -84,57 +85,61 @@ class ProfileController extends Controller
     public function addReview($id)
     {
 
-        if($this->session->get('user')){
-
-            if($this->checkUser($id)){
-    
-                $review = new Review;
-    
-                if($this->request->post()){
-    
-                    $review->data($this->request->body());
-    
-                    $getReview = Review::findOne(['user_id' => $this->session->get('user'), 'profile_id' => $this->user->id]);
-    
-                    if(!$getReview){
-    
-                        $review->profile_id = $this->user->id;
-                        $review->user_id = $this->session->get('user');
-    
-                        if($review->validate() && $review->save()){
-    
-                            $this->session->setFlash('success', 'Dziekujemy, twoja opinia została pomyślnie przesłana, zostanie wyświetlona po rozpatrzeniu prze Administrację.');
-    
-                            $this->response->redirect('/profil/'.$id.'/opinie');
-    
-                        } else {
-    
-                            $this->session->setFlash('danger', $review->getFirstError());
-                            
-                        }
-    
-                    } else {
-    
-                        $this->response->redirect('/profil/' . $id . '/opinie');
-    
-                        $this->session->setFlash('danger', 'Ten użytkownik odtrzymał juz opinie od ciebie');
-    
-                    }
-    
-                }
-    
-                return $this->render('profile/add_review', [
-                    'user' => $this->user,
-                    'model' => $review
-                ]);
-            }
-
-        } else {
+        if(!$this->session->get('user')){
 
             $this->response->redirect('/logowanie');
 
             $this->session->setFlash('danger', 'Najpierw musisz się zalogować');
-    
+
+            return;
+
+        }
+
+        if($this->checkUser($id)){
+
+            $review = new Review;
+
+            if($this->request->post()){
+
+                $review->data($this->request->body());
+
+                $getReview = Review::findOne(['user_id' => $this->session->get('user'), 'profile_id' => $this->user->id]);
+
+                if($getReview){
+
+                    $this->session->setFlash('danger', 'Ten użytkownik odtrzymał juz opinie od ciebie');
+
+                    $this->response->redirect('/profil/' . $id . '/opinie');
+                    
+                    return;
+                    
+                } 
+                    
+                $review->profile_id = $this->user->id;
+                $review->user_id = $this->session->get('user');
+
+                if($review->validate() && $review->save()){
+
+                    $this->session->setFlash('success', 'Dziekujemy, twoja opinia została pomyślnie przesłana, zostanie wyświetlona po rozpatrzeniu prze Administrację.');
+
+                    $this->response->redirect('/profil/'.$id.'/opinie');
+
+                    return;
+
+                } else {
+
+                    $this->session->setFlash('danger', $review->getFirstError());
+                    
+                }
+                
+
+            }
+
+            return $this->render('profile/add_review', [
+                'user' => $this->user,
+                'model' => $review
+            ]);
+
         }
 
     }

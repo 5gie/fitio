@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\system\DbModel;
+use PDO;
 
 class Review extends DbModel
 {
@@ -60,12 +61,26 @@ class Review extends DbModel
 
         $reviews = self::findAll($where);
 
-        // return $reviews ? array_map(function($review){
-        //     $review->user = User::getUserData($review->user_id);
-        //     return $review;
-        // }, $reviews) : false;
-        return $reviews ? array_map(fn($review) => $review->user = User::getUserData($review->user_id), $reviews) : false;
+        return $reviews ? array_map(function($review){
+            $review->user = User::getUserData($review->user_id);
+            return $review;
+        }, $reviews) : false;
 
+        
+        return $reviews;
+
+    }
+
+    public static function userRating($user_id): float
+    {
+
+        $stmt = self::prepare("SELECT AVG(rating) as rating FROM ".self::tableName()." WHERE user_id = :user_id");
+        
+        $stmt->bindValue(":user_id", $user_id);
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['rating'] ?? 0;
 
     }
 

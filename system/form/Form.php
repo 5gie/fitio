@@ -33,4 +33,9 @@ class Form
         return new Approval($model, $attribute);
     }
 
+    public function SelectField(Model $model, $attribute, $options)
+    {
+        return new SelectField($model, $attribute, $options);
+    }
+
 }

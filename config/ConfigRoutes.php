@@ -12,11 +12,17 @@ class ConfigRoutes
 
         $router->setNamespace('app\controllers');
 
+        $router->get('/test', 'SiteController@fetch');
         $router->get('/', 'SiteController@home');
         $router->get('/logowanie', 'AuthController@login');
         $router->post('/logowanie', 'AuthController@login');
         $router->get('/rejestracja', 'AuthController@register');
         $router->post('/rejestracja', 'AuthController@register');
+        $router->get('/aktywacja/{ckey}', 'AuthController@activate');
+        $router->get('/reset', 'AuthController@reset');
+        $router->post('/reset', 'AuthController@reset');
+        $router->get('/haslo/{ckey}', 'AuthController@newPassword');
+        $router->post('/haslo/{ckey}', 'AuthController@newPassword');
         
         $router->get('/wyloguj', 'AuthController@logout');
         
@@ -59,6 +65,9 @@ class ConfigRoutes
             $router->get('/', 'ProfileController@profile');
             
         });
+
+        $router->get('/uzytkownicy', 'UsersController@list');
+        $router->get('/uzytkownicy/strona/{page}', 'UsersController@list');
    
         // $router->post('/contact', 'SiteController@contact');
         // $router->post('/login', 'AuthController@login');

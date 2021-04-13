@@ -9,6 +9,7 @@ use app\models\UserApprovals;
 use app\models\UserData;
 use app\models\UserDelete;
 use app\system\Controller;
+use app\system\helpers\Image;
 use app\system\helpers\Uploader;
 use app\system\middlewares\AuthMiddleware;
 use Exception;
@@ -48,7 +49,9 @@ class AccountController extends Controller
         
         $user->data = UserData::findOne(['user_id' => $user->id]);
 
-        return $this->render('account/account',['user' => $user]);
+        if($user->data && $user->data->image) $user->data->image = Image::userImage($user->data->image);
+
+        return $this->render('account/account', ['user' => $user]);
 
     }
     
@@ -60,7 +63,7 @@ class AccountController extends Controller
 
         $userData->user_id = $this->session->get('user');
 
-        $data = UserData::findOne(['user_id' => $userData->user_id]);
+        $data = UserData::findOne(['user_id' => $userData->user_id])->toEdit();
 
         if($data) $userData->data($data);
 
@@ -68,19 +71,9 @@ class AccountController extends Controller
 
             if($this->request->file('image')){
 
-                $uploader = new Uploader;
+                $uploader = $userData->setImage(new Uploader(USER_IMG_ROOT));
 
-                if($uploader->addUserImage(dirname(__DIR__) . USER_IMG_ROOT, 'image')){
-
-                    if($userData->image) if (!unlink(dirname(__DIR__) . USER_IMG_ROOT . $userData->image)) error_log('Błąd przy usuwanie zdjecia uzytkownika');
-
-                    $userData->image = $uploader->name;
-
-                } else {
-
-                    $this->session->setFlash('danger', $uploader->error);
-
-                }
+                if($uploader->error) $this->session->setFlash('danger', $uploader->error);
 
             }
 
@@ -98,7 +91,7 @@ class AccountController extends Controller
 
         }
 
-        return $this->render('account/data',[
+        return $this->render('account/data', [
             'model' => $userData
         ]);
 

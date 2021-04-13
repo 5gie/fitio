@@ -15,8 +15,9 @@ $config = [
     'db' => [
         'dsn' => $_ENV['DB_DSN'],
         'user' => $_ENV['DB_USER'],
+        'dbname' => $_ENV['DB_NAME'],
         'password' => $_ENV['DB_PASSWORD']
-    ]  
+    ],
 ];
 
 $app = new App(dirname(__DIR__), $config, true);

@@ -14,6 +14,7 @@ use app\system\form\Form;
             <button type="submit" class="btn btn-primary">Zaloguj</button>
             <span>Nie masz jeszcze konta? <a class="text-light" href="/rejestracja">Zarejestruj</a></span>
         </footer>
+        <p class="text-right">Nie pamietasz hasła? <a class="text-light" href="/reset">Zresetuj je tutaj</a></p>
         <?php echo Form::end() ?>
     </div>
 </div>

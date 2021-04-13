@@ -148,6 +148,26 @@ abstract class DbModel extends Model
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
 
+    public static function countAll($where = [])
+    {
+        $tableName = static::tableName();
+
+        $query = '';
+
+        $attributes = array_keys($where);
+        if(!empty($where)) $query = " WHERE " . implode(" AND ", array_map(fn ($attr) => "$attr = :$attr", $attributes));
+
+        $stmt = self::prepare("SELECT count(*) as amount FROM $tableName $query");
+        
+        foreach ($where as $key => $item) {
+            $stmt->bindValue(":$key", $item);
+        }
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['amount'];
+    }
+
     
 
 }

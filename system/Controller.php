@@ -2,7 +2,8 @@
 
 namespace app\system;
 
-use app\system\middlewares\BaseMiddleware;
+use app\system\helpers\Logger;
+// use app\system\middlewares\BaseMiddleware;
 
 class Controller extends View
 {
@@ -10,6 +11,7 @@ class Controller extends View
     public Response $response;
     public Request $request;
     public Session $session;
+    public Logger $logger;
 
     public string $action = '';
     protected array $middlewares = [];
@@ -18,13 +20,12 @@ class Controller extends View
         $this->request = new Request;
         $this->response = new Response;
         $this->session = new Session;
+        $this->logger = new Logger;
     }
  
     public function setLayout($layout)
     {
-
         $this->layout = $layout;
-
     }
 
     // public function render($view, $params = [])

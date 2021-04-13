@@ -10,7 +10,6 @@ class App
 
     // public string $userClass;
     public static App $app;
-    // public ConfigRoutes $router;
     public Database $db;
 
     public function __construct($root, array $config, $run = false)
@@ -49,9 +48,10 @@ class App
     //     $this->session->remove('user');
     // }
 
-    public static function isGuest()
+    public static function isGuest(): bool
     {
         return !self::$app->user;
     }
+
 
 }

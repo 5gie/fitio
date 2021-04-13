@@ -3,7 +3,7 @@
     <div class="card card-body">
         <ul class="list-unstyled">
             <li class="nav-item">
-                <a class="nav-link" href="/konto/wiadomosc">Wiadomości</a>
+                <a class="nav-link" href="/konto/wiadomosci">Wiadomości</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/konto/opinie">Twoje opinie</a>
@@ -22,4 +22,7 @@
             </li>
         </ul>
     </div>
+    <?php if($user->data): ?>
+    <img src="<?php echo $user->data->image ?>" alt="<?php echo $user->data->name ?>">
+    <?php endif; ?>
 </div>

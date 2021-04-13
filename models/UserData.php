@@ -3,6 +3,10 @@
 namespace app\models;
 
 use app\system\DbModel;
+use app\system\helpers\Filter;
+use app\system\helpers\Image;
+use app\system\helpers\Unlink;
+use app\system\helpers\Uploader;
 
 class UserData extends DbModel
 {
@@ -11,6 +15,7 @@ class UserData extends DbModel
     public string $name = '';
     public string $content = '';
     public string $image = '';
+    public ?string $renderImage;
 
     public static function tableName(): string
     {
@@ -49,6 +54,43 @@ class UserData extends DbModel
             'content' => 'Twój opis',
             'image' => 'Zdjęcie profilowe / logo firmy'
         ];
+    }
+
+    public function setImage(Uploader $uploader): Uploader 
+    {
+
+        if($uploader->addUserImage('image')){
+
+            if($this->image) new Unlink(USER_IMG_ROOT . $this->image, true);
+            $this->image = $uploader->name;
+            $this->renderImage = Image::userImage($this->image);
+
+        } 
+
+        return $uploader;
+
+    }
+    
+    public function toRender(): UserData
+    {
+
+        if($this->content) $this->content = Filter::html_decode($this->content);
+        // TODO: usunac to
+        $this->content = str_replace('\n','<br>',$this->content);
+        // 
+        if(!empty($this->image)) $this->image = Image::userImage($this->image);
+
+        return $this;
+    }
+
+    public function toEdit(): UserData
+    {
+
+        if($this->content) $this->content = Filter::html_decode($this->content);
+
+        if(!empty($this->image)) $this->renderImage = Image::userImage($this->image);
+
+        return $this;
     }
 
 }

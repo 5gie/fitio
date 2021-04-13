@@ -1,21 +1,17 @@
 <?php
-
 use app\system\form\Form;
 ?>
 <div class="container">
     <div class="form-page">
-        <h1>Twoje dane</h1>
-        <?php $form = Form::begin('', 'POST', true) ?>
+        <h1>Reset Hasła</h1>
+        <?php $form = Form::begin('', 'POST') ?>
 
-        <?php echo $form->inputField($model, 'name') ?>
-        <?php echo $form->textareaField($model, 'content') ?>
-        <?php echo $form->inputField($model, 'image')->fileField() ?>
+        <?php echo $form->inputField($model, 'email') ?>
 
         <footer class="form-footer">
-            <button type="submit" class="btn btn-primary">Aktualizuj</button>
+            <button type="submit" class="btn btn-primary">Zarejestruj</button>
         </footer>
         <?php echo Form::end() ?>
-        <img src="<?php echo $model->renderImage ?>">
     </div>
 </div>
 <style>
