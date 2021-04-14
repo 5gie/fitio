@@ -14,10 +14,10 @@ class AuthController extends Controller
 
     public function __construct() 
     {
-        $this->view->setLayout('auth');
         
         parent::__construct();
-
+        
+        $this->view->setLayout('auth');
     }
 
     public function activate($ckey)

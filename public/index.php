@@ -1,5 +1,6 @@
 <?php
-use app\models\User;
+
+use admin\Admin;
 use app\system\App;
 use Dotenv\Dotenv;
 
@@ -11,7 +12,6 @@ $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
 $config = [
-    'userClass' => User::class,
     'db' => [
         'dsn' => $_ENV['DB_DSN'],
         'user' => $_ENV['DB_USER'],
@@ -20,7 +20,16 @@ $config = [
     ],
 ];
 
-$app = new App(dirname(__DIR__), $config, true);
+if(strpos($_SERVER['REQUEST_URI'], $_ENV['ADMIN_ROUTE']) === false){
+
+    $app = new App(dirname(__DIR__), $config, true);
+    
+} else {
+    
+    $admin = new Admin(dirname(__DIR__), $config);
+
+}
+
 
 function debug($var)
 {

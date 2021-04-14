@@ -22,7 +22,6 @@ class SiteController extends Controller
 
     public function home()
     {
-        $this->title = 'Fitio';
         $this->view->addJs('home.js');
 
         return $this->view->render('home');

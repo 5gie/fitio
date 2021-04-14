@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?php echo $this->title ?></title>
+    <title><?php echo $this->settings->meta_title ?></title>
 
     <link rel="icon" type="image/png" href="fav.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
