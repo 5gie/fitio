@@ -14,7 +14,7 @@ class AuthController extends Controller
 
     public function __construct() 
     {
-        $this->setLayout('auth');
+        $this->view->setLayout('auth');
         
         parent::__construct();
 
@@ -62,6 +62,8 @@ class AuthController extends Controller
     public function login()
     {
 
+        if(!$this->checkNotAuth()) return;
+
         $login = new Login;
 
         if($this->request->post()){
@@ -71,7 +73,7 @@ class AuthController extends Controller
 
                 $this->session->set('user', $login->id);
 
-                $this->response->redirect('/konto');
+                $this->doRedirect('/konto');
 
                 return;
 
@@ -82,15 +84,18 @@ class AuthController extends Controller
             }
         }
 
-        return $this->render('auth/login', [
+        return $this->view->render('auth/login', [
             'model' => $login
         ]);
 
     }
 
+
     public function logout()
     {
 
+        if(!$this->checkAuth()) return;
+        
         $this->session->remove('user');
 
         $this->response->redirect('/');
@@ -103,6 +108,8 @@ class AuthController extends Controller
 
     public function register()
     {
+
+        if(!$this->checkNotAuth()) return;
 
         $user = new User;
 
@@ -137,7 +144,7 @@ class AuthController extends Controller
 
         }
 
-        return $this->render('auth/register', [
+        return $this->view->render('auth/register', [
             'model' => $user,
         ]);
 
@@ -145,6 +152,8 @@ class AuthController extends Controller
 
     public function reset()
     {
+
+        if(!$this->checkNotAuth()) return;
 
         $user = new User;
 
@@ -180,7 +189,7 @@ class AuthController extends Controller
 
         }
 
-        return $this->render('auth/reset', [
+        return $this->view->render('auth/reset', [
             'model' => $user,
         ]);
 
@@ -218,7 +227,7 @@ class AuthController extends Controller
 
             }
 
-            return $this->render('auth/reset');
+            return $this->view->render('auth/reset');
 
         } else {
 

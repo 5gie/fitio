@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?php echo $this->title ?></title>
+    <title><?php echo $this->settings->meta_title ?></title>
+    <meta name="description" content="<?php echo $this->settings->meta_desc ?>">
+    <meta name="keywords" content="<?php echo $this->settings->meta_keywords ?>">
 
     <link rel="icon" type="image/png" href="fav.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">

@@ -7,7 +7,6 @@ use app\models\Conversation;
 use app\models\Message;
 use app\models\Review;
 use app\models\User;
-use app\models\UserApprovals;
 use app\models\UserData;
 use app\system\Controller;
 use app\system\helpers\Filter;
@@ -24,9 +23,9 @@ class SiteController extends Controller
     public function home()
     {
         $this->title = 'Fitio';
-        $this->addJs('home.js');
+        $this->view->addJs('home.js');
 
-        return $this->render('home');
+        return $this->view->render('home');
     }
 
     public function crop()
@@ -187,7 +186,7 @@ class SiteController extends Controller
     //         }
     //     }
 
-    //     return $this->render('contact', [
+    //     return $this->view->render('contact', [
     //         'model' => $contact
     //     ]);
         

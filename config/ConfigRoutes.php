@@ -12,7 +12,7 @@ class ConfigRoutes
 
         $router->setNamespace('app\controllers');
 
-        $router->get('/test', 'SiteController@fetch');
+        // $router->get('/test', 'SiteController@fetch');
         $router->get('/', 'SiteController@home');
         $router->get('/logowanie', 'AuthController@login');
         $router->post('/logowanie', 'AuthController@login');
@@ -68,12 +68,9 @@ class ConfigRoutes
 
         $router->get('/uzytkownicy', 'UsersController@list');
         $router->get('/uzytkownicy/strona/{page}', 'UsersController@list');
+
+        $router->get('/{page}', 'SubpageController@subpage');
    
-        // $router->post('/contact', 'SiteController@contact');
-        // $router->post('/login', 'AuthController@login');
-        // $router->get('/register', 'AuthController@register');
-        // $router->get('/logout', 'AuthController@logout');
-        
         return $router->run();
     }
 }

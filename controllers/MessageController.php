@@ -6,8 +6,6 @@ use app\models\Conversation;
 use app\models\Message;
 use app\models\User;
 use app\system\Controller;
-use app\system\middlewares\AuthMiddleware;
-use Exception;
 
 class MessageController extends Controller
 {
@@ -18,24 +16,9 @@ class MessageController extends Controller
 
     public function __construct()
     {
-
         parent::__construct();
 
-        $middleware = new AuthMiddleware($this->session);
-
-        try {
-
-            $middleware->execute();
-        } catch (Exception $e) {
-
-            $this->response->setStatusCode($e->getCode());
-
-            $this->session->setFlash('danger', $e->getMessage());
-
-            $this->response->redirect('/logowanie');
-
-            exit;
-        }
+        if(!$this->checkAuth()) return;
     }
 
     public function newConversation($id)
@@ -44,58 +27,50 @@ class MessageController extends Controller
         $conversation = new Conversation;
         $message = new Message;
 
-        $user = User::findOne(['id' => $id]);
+        if(!$this->getUser($id)) return;
 
-        if($user){
+        if ($this->request->post()) {
 
-            if ($this->request->post()) {
+            $conversation->sender = $this->session->get('user');
 
-                $conversation->sender = $this->session->get('user');
+            $conversation->recipient = $id;
 
-                $conversation->recipient = $id;
+            if ($conversation->validate() && $conversation->save()) {
 
-                if ($conversation->validate() && $conversation->save()) {
+                // TODO: sprawdzic kilka ostatnich wiadomosci do tego uzytkownika zeby nie bylo za duzo
 
-                    // TODO: sprawdzic kilka ostatnich wiadomosci do tego uzytkownika zeby nie bylo za duzo
+                $message->conversation_id = $conversation->id;
 
-                    $message->conversation_id = $conversation->id;
+                $message->data($this->request->body());
 
-                    $message->data($this->request->body());
+                $message->user_id = $this->session->get('user');
 
-                    $message->user_id = $this->session->get('user');
+                if ($message->validate() && $message->save()) {
 
-                    if ($message->validate() && $message->save()) {
+                    $this->session->setFlash('success', 'Wiadomość została pomyślnie wysłana');
 
-                        $this->session->setFlash('success', 'Wiadomość została pomyślnie wysłana');
-
-                        $this->response->redirect("/konto/wiadomosci/$conversation->id");
-                        
-                    } else {
-
-                        $conversation->delete(['id' => $conversation->id]);
-
-                        $this->session->setFlash('danger', $message->getFirstError());
-                    }
-
+                    $this->response->redirect("/konto/wiadomosci/$conversation->id");
+                    
                 } else {
 
-                    $this->session->setFlash('danger', $conversation->getFirstError());
+                    $conversation->delete(['id' => $conversation->id]);
+
+                    $this->session->setFlash('danger', $message->getFirstError());
                 }
 
+            } else {
+
+                $this->session->setFlash('danger', $conversation->getFirstError());
             }
-
-        } else {
-
-            $this->session->setFlash('error', 'Taki użytkownik nie istnieje lub został usunięty.');
-
-            $this->response->redirect('/');
 
         }
 
-        return $this->render('profile/new_conversation', [
+
+
+        return $this->view->render('profile/new_conversation', [
             'conversation' => $conversation,
             'message' => $message,
-            'user' => $user->id
+            'user' => $this->user->id
         ]);
         
     }
@@ -107,7 +82,7 @@ class MessageController extends Controller
 
         if($conversations) $conversations = $this->mapConversationMessages($conversations);
 
-        return $this->render('account/conversation/list', [
+        return $this->view->render('account/conversation/list', [
             'conversations' => $conversations
         ]);
 
@@ -174,7 +149,7 @@ class MessageController extends Controller
 
         }
 
-        return $this->render('account/conversation', [
+        return $this->view->render('account/conversation', [
             'conversation' => $this->conversation,
             'messages' => $messages,
             'model' => $model,

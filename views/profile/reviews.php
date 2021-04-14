@@ -12,7 +12,7 @@
             <?php foreach ($user->reviews as $review) : ?>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5><?php echo $review->user->content ? $review->user->content->name : $review->user->email ?></h5>
+                        <h5><?php echo $review->user->data ? $review->user->data->name : $review->user->email ?></h5>
                         <p><?php echo $review->content ?></p>
                         <?php for ($i = 1; $i <= 5; $i++) : ?>
                             <?php if ($i <= $review->rating) : ?>

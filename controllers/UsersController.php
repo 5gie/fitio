@@ -13,7 +13,7 @@ class UsersController extends Controller
     {
         parent::__construct();
 
-        $this->setLayout('test');
+        $this->view->setLayout('test');
 
     }
 
@@ -40,7 +40,7 @@ class UsersController extends Controller
 
         $paginator = new Paginator($total, $limit, $page, $url);
 
-        return $this->render('users/list', [
+        return $this->view->render('users/list', [
             'users' => $this->usersToRender($users),
             'paginator' => $paginator
         ]);
@@ -50,7 +50,7 @@ class UsersController extends Controller
     public function usersToRender(?array $users): array
     {
 
-        if(!empty($users)) foreach($users as $user) $user->ToRender();
+        if(!empty($users)) foreach($users as $user) if(!$user->id == $this->session->get('user')) $user->ToRender();
 
         return $users ?? false;
 

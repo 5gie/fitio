@@ -69,4 +69,9 @@ class Request
 
     }
 
+    public function getRequestUri()
+    {
+        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : false;
+    }
+
 }

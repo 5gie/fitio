@@ -94,13 +94,7 @@ class User extends DbModel
 
     public static function getUserData($user_id)
     {
-
-        $user = self::findOne(['id' => $user_id]);
-
-        if($user) $user->data = UserData::findOne(['user_id' => $user->id]);
-
-        return $user;
-        
+        return self::findOne(['id' => $user_id])->toRender();
     }
 
     public function getTypeOptions()

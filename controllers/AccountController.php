@@ -11,8 +11,6 @@ use app\models\UserDelete;
 use app\system\Controller;
 use app\system\helpers\Image;
 use app\system\helpers\Uploader;
-use app\system\middlewares\AuthMiddleware;
-use Exception;
 
 class AccountController extends Controller
 {
@@ -22,23 +20,7 @@ class AccountController extends Controller
 
         parent::__construct();
 
-        $middleware = new AuthMiddleware($this->session);
-
-        try{
-             
-            $middleware->execute();
-
-        } catch(Exception $e){
-
-            $this->response->setStatusCode($e->getCode());
-
-            $this->session->setFlash('danger', $e->getMessage());
-
-            $this->response->redirect('/logowanie');    
-
-            exit;
-
-        }
+        if(!$this->checkAuth()) return;
         
     }
 
@@ -51,7 +33,7 @@ class AccountController extends Controller
 
         if($user->data && $user->data->image) $user->data->image = Image::userImage($user->data->image);
 
-        return $this->render('account/account', ['user' => $user]);
+        return $this->view->render('account/account', ['user' => $user]);
 
     }
     
@@ -91,7 +73,7 @@ class AccountController extends Controller
 
         }
 
-        return $this->render('account/data', [
+        return $this->view->render('account/data', [
             'model' => $userData
         ]);
 
@@ -122,7 +104,7 @@ class AccountController extends Controller
 
         }
 
-        return $this->render('account/password', [
+        return $this->view->render('account/password', [
             'model' => $user
         ]);
 
@@ -154,7 +136,7 @@ class AccountController extends Controller
 
         $model->userApprovals = UserApprovals::findAll(['user_id' => $model->user_id]);
 
-        return $this->render('account/approvals', [
+        return $this->view->render('account/approvals', [
             'model' => $model
         ]);
 
@@ -202,7 +184,7 @@ class AccountController extends Controller
 
         }
 
-        return $this->render('account/delete',[
+        return $this->view->render('account/delete',[
             'delete' => $delete,
             'model' => $userDelete
         ]);
@@ -221,7 +203,7 @@ class AccountController extends Controller
             
         },$reviews);
 
-        return $this->render('account/reviews', [
+        return $this->view->render('account/reviews', [
             'reviews' => $reviews
         ]);
 
