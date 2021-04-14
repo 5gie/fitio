@@ -2,15 +2,17 @@
 
 namespace app\system;
 
-use admin\Admin;
+use app\system\App;
 use app\system\form\Form;
 
 class AdminView
 {
 
+    public string $title = '';
     public string $layout = 'main';
     public array $css = [];
     public array $js = [];
+    public array $actions = [];
     public ?Form $form;
     public Session $session;
 
@@ -41,17 +43,21 @@ class AdminView
         $javscriptContent = $this->javscriptContent();
         $cssContent = $this->cssContent();
         $navbarContent = $this->navbarContent();
+        $actionsContent = $this->actionsContent();
+        $userContent = $this->userContent();
 
-        $this->form = new Form;
-
-        echo str_replace(['{{content}}','{{alerts}}', '{{css}}', '{{javascript}}', '{{navbar}}'], [$viewContent, $alertsContent, $cssContent, $javscriptContent, $navbarContent], $layoutContent);
+        echo str_replace(
+            ['{{content}}','{{alerts}}', '{{css}}', '{{javascript}}', '{{navbar}}', '{{actions}}', '{{user}}'],
+            [$viewContent, $alertsContent, $cssContent, $javscriptContent, $navbarContent, $actionsContent, $userContent],
+            $layoutContent
+        );
     }
 
     protected function alertsContent()
     {
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/components/alerts.php";
+        include_once App::$ADMIN_DIR . "/views/components/alerts.php";
         return ob_get_clean();
     }
 
@@ -59,7 +65,7 @@ class AdminView
     {
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/components/javascript.php";
+        include_once App::$ADMIN_DIR . "/views/components/javascript.php";
         return ob_get_clean();
     }
 
@@ -67,7 +73,7 @@ class AdminView
     {
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/components/navbar.php";
+        include_once App::$ADMIN_DIR . "/views/components/navbar.php";
         return ob_get_clean();
     }
 
@@ -75,7 +81,23 @@ class AdminView
     {
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/components/css.php";
+        include_once App::$ADMIN_DIR . "/views/components/css.php";
+        return ob_get_clean();
+    }
+
+    protected function actionsContent()
+    {
+
+        ob_start();
+        include_once App::$ADMIN_DIR . "/views/components/actions.php";
+        return ob_get_clean();
+    }
+
+    protected function userContent()
+    {
+
+        ob_start();
+        include_once App::$ADMIN_DIR . "/views/components/user.php";
         return ob_get_clean();
     }
 
@@ -83,7 +105,7 @@ class AdminView
     {
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/layouts/$this->layout.php";
+        include_once App::$ADMIN_DIR . "/views/layouts/$this->layout.php";
         return ob_get_clean();
     }
 
@@ -93,7 +115,7 @@ class AdminView
         foreach($data as $key => $value) $$key = $value;
 
         ob_start();
-        include_once Admin::$ADMIN_DIR . "/views/$view.php";
+        include_once App::$ADMIN_DIR . "/views/$view.php";
         return ob_get_clean();
     }
     
@@ -109,6 +131,12 @@ class AdminView
     public function addJs($name)
     {
         $this->js[] = HTTP_SERVER . 'assets/js/' . $name;
+    }
+
+    public function image($name, $alt = false)
+    {
+        $alt = $alt ?? '';
+        return '<img src='.IMG_DIR.$name.'>';
     }
 
 }

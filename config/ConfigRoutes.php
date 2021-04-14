@@ -6,8 +6,24 @@ use Bramus\Router\Router;
 
 class ConfigRoutes
 {
-    public function __construct()
+    public function __construct($admin = false)
     {
+
+        if(!$admin){
+
+            $this->indexRoutes();
+
+        } else {
+
+            $this->adminRoutes();
+
+        }
+       
+    }
+
+    public function indexRoutes()
+    {
+
         $router = new Router;
 
         $router->setNamespace('app\controllers');
@@ -68,9 +84,28 @@ class ConfigRoutes
 
         $router->get('/uzytkownicy', 'UsersController@list');
         $router->get('/uzytkownicy/strona/{page}', 'UsersController@list');
-
+        
         $router->get('/{page}', 'SubpageController@subpage');
-   
-        return $router->run();
+
+        $router->run();
     }
+
+
+    public function adminRoutes()
+    {
+
+        $router = new Router;
+
+        $router->setNamespace('admin\controllers');
+
+        $router->setBasePath('/admin');
+        $router->get('/', 'DashboardController@dashboard');
+        $router->get('/logowanie', 'AuthController@login');
+        $router->post('/logowanie', 'AuthController@login');
+
+        $router->run();
+   
+
+    }
+    
 }

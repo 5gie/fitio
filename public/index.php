@@ -1,6 +1,5 @@
 <?php
 
-use admin\Admin;
 use app\system\App;
 use Dotenv\Dotenv;
 
@@ -20,17 +19,8 @@ $config = [
     ],
 ];
 
-if(strpos($_SERVER['REQUEST_URI'], $_ENV['ADMIN_ROUTE']) === false){
-
-    $app = new App(dirname(__DIR__), $config, true);
+$app = new App(dirname(__DIR__), $config, true);
     
-} else {
-    
-    $admin = new Admin(dirname(__DIR__), $config);
-
-}
-
-
 function debug($var)
 {
     echo "<pre style='padding:10px;font-size:12px;background:#2D2D2D;color:#d0d0d0;'>";

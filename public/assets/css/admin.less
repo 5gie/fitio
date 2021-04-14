@@ -16,3 +16,29 @@ img {
         opacity: 0;
     }
 }
+.main-wrapper{
+    display: flex;
+    height:100vh;
+    width:100vw;
+    overflow: hidden;
+    .left-col{
+        flex: 0 0 320px;
+        background: #f2f2f2;
+    }
+    .main-col{
+        flex-grow:1;
+    }
+}
+.content-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    h1{
+        font-size:24px;
+        font-weight:600;
+        color:#222222;
+        margin-bottom: 0px;
+    }
+}
